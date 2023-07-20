@@ -53,11 +53,10 @@ def main():
             elif cmd == "l" or cmd == "list":
                 shell = ["git", "for-each-ref", "--format=%(refname:short)", "refs/heads/"]
                 process = subprocess.Popen(shell, cwd=config["OSU_PATH"], stdout=subprocess.PIPE)
-                thread = await item.channel.create_thread(name="git branch", type=discord.ChannelType.public_thread)
                 text = ""
                 for line in iter(process.stdout.readline, b''):
                     text += "{}, ".format(line.decode("utf-8").strip())
-                await thread.send(text[:len(text) - 2])
+                await item.channel.send(text[:len(text) - 2])
 
             elif cmd == "h" or cmd == "help":
                 await item.channel.send("Hello, World!")
