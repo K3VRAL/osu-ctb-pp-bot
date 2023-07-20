@@ -26,7 +26,7 @@ def main():
             if (cmd == "p" or cmd == "profile") and len(msg) == 1:
                 shell = ["dotnet", "run", "--", "profile", msg[0], config["ID"], config["SECRET"], "-r", "2" , "-j"]
                 print(" ".join(shell))
-                process = subprocess.Popen(shell, cwd=config["PATH"], stdout=subprocess.PIPE)
+                process = subprocess.Popen(shell, cwd=config["PC_PATH"], stdout=subprocess.PIPE)
                 thread = await item.channel.create_thread(name=msg[0], type=discord.ChannelType.public_thread)
                 for line in iter(process.stdout.readline, b''):
                     try:
@@ -52,7 +52,7 @@ def main():
             elif (cmd == "l" or cmd == "list"):
                 shell = ["git", "branch", "-q"]
                 print(" ".join(shell))
-                process = subprocess.Popen(shell, cwd=config["PATH"], stdout=subprocess.PIPE)
+                process = subprocess.Popen(shell, cwd=config["OSU_PATH"], stdout=subprocess.PIPE)
                 thread = await item.channel.create_thread(name="git branch", type=discord.ChannelType.public_thread)
                 for line in iter(process.stdout.readline, b''):
                     await thread.send(line.decode("utf-8"))
