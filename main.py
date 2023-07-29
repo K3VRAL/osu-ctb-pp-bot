@@ -29,26 +29,28 @@ def main():
                 print(" ".join(shell))
                 process = subprocess.Popen(shell, cwd=config["PC_PATH"], stdout=subprocess.PIPE)
                 thread = await item.channel.create_thread(name=msg[0], type=discord.ChannelType.public_thread)
-                for line in iter(process.stdout.readline, b''):
-                    try:
-                        objson = json.loads(line)
-                        break
-                    except:
-                        await thread.send(line.decode("utf-8"))
-                        continue
-                if type(objson) != dict:
-                    return
+                try:
+                    for line in iter(process.stdout.readline, b''):
+                        try:
+                            objson = json.loads(line)
+                            break
+                        except:
+                            await thread.send(line.decode("utf-8"))
+                            continue
+                    if type(objson) != dict:
+                        return
 
-                for key in objson.keys():
-                    if key == "Scores":
-                        continue
-                    await thread.send("{}: {}".format(key, objson[key]))
-                
-                for score in objson["Scores"]:
-                    embed = discord.Embed(description="Combo: {}".format(score["Combo"]))
-                    # {'BeatmapId': 1181952, 'BeatmapName': 'Halozy - Snow Changes to a Beat Again (BoberOfDarkness) [Blizzard]', 'Combo': 339, 'Accuracy': 99.75369458128078, 'MissCount': 0.0, 'Mods': [], 'LivePp': 194.243, 'LocalPp': 194.2392055189923, 'PositionChange': 0}
-                    embed.set_author(name=score["BeatmapName"], url="https://osu.ppy.sh/b/{}".format(score["BeatmapId"]))
-                    await thread.send(embed=embed)
+                    for key in objson.keys():
+                        if key == "Scores":
+                            continue
+                        await thread.send("{}: {}".format(key, objson[key]))
+                    
+                    for score in objson["Scores"]:
+                        await thread.send(score["Combo"])
+                except:
+                    error = "An error has occurred."
+                    print(error)
+                    await thread.send(error)
 
             elif cmd == "l" or cmd == "list":
                 shell = ["git", "for-each-ref", "--format=%(refname:short)", "refs/heads/"]
